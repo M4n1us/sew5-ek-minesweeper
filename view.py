@@ -8,6 +8,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QDialog, QPushButton
 
 from CustomButton import CustomButton
 
@@ -30,6 +31,27 @@ class Ui_MainWindow(object):
         self.buttons.setObjectName("buttons")
 
         self.mines = []
+        self.showStart()
+
+        self.horizontalLayout.addLayout(self.buttons)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 622, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        self.d = QDialog()
+        self.b1 = QPushButton("Restart", self.d)
+        self.b1.move(50, 50)
+        self.d.setWindowTitle("Restart?")
+        self.d.setWindowModality(QtCore.Qt.ApplicationModal)
+
+    def showStart(self):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -57,17 +79,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.pushButton)
         self.buttons.addLayout(self.horizontalLayout_3, 0, 0, 1, 1)
 
-        self.horizontalLayout.addLayout(self.buttons)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 622, 21))
-        self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        _translate = QtCore.QCoreApplication.translate
+        self.label.setText(_translate("MainWindow", "Grid width:"))
+        self.label_2.setText(_translate("MainWindow", "Grid height:"))
+        self.pushButton.setText(_translate("MainWindow", "Play"))
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -77,8 +92,16 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Grid height:"))
         self.pushButton.setText(_translate("MainWindow", "Play"))
 
+    def showRestart(self):
+        self.d.exec_()
+
     def get_x_y(self):
         return self.x_spin.value(), self.y_spin.value()
+
+    def teardown_game(self):
+        for i in reversed(range(self.buttons.count())):
+            self.buttons.itemAt(i).widget().setParent(None)
+        self.mines = []
 
     def teardown_menu(self):
         for i in reversed(range(self.horizontalLayout_3.count())):

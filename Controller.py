@@ -15,6 +15,7 @@ class Controller(QMainWindow):
         self.myForm = Ui_MainWindow()
         self.myForm.setupUi(self)
         self.myForm.pushButton.clicked.connect(self.start_game)
+        self.myForm.b1.clicked.connect(self.restart_game)
         self.field_values = []
         self.mine_char = "X"
 
@@ -24,13 +25,10 @@ class Controller(QMainWindow):
         self.myForm.setupMines(x, y)
         for row in self.myForm.mines:
             for item in row:
-                item.leftclick_handler = self.click_button
-                item.rightclick_handler = self.right_button
+                item.leftclick_handler = self.leftclick_button
+                item.rightclick_handler = self.rightclick_button
         self.generate_mines(x, y)
         self.generate_mine_numbers(x, y)
-        for y_pos in range(y):
-            for x_pos in range(x):
-                self.myForm.mines[y_pos][x_pos].setText(str(self.field_values[y_pos][x_pos]))
 
     def generate_mines(self, x, y):
         for y_pos in range(y):
@@ -166,12 +164,38 @@ class Controller(QMainWindow):
         if self.field_values[y_pos + 1][x_pos + 1] != self.mine_char:
             self.field_values[y_pos + 1][x_pos + 1] += 1
 
+    def leftclick_button(self, button, x, y):
+        if self.field_values[y][x] == self.mine_char:
+            self.end_game(button)
+        elif self.field_values[y][x] == 0:
+            self.flood_fill(x, y)
+        else:
+            self.myForm.disableButton(x, y)
+            self.myForm.mines[y][x].setText(str(self.field_values[y][x]))
 
-    def click_button(self, button, x, y):
-        #self.myForm.disableButton(x, y)
+    def restart_game(self):
+        self.field_values = []
+        self.myForm.teardown_game()
+        self.myForm.showStart()
+        self.myForm.pushButton.clicked.connect(self.start_game)
+        self.myForm.d.close()
         pass
 
-    def right_button(self, button, x, y):
+    def flood_fill(self, x, y):
+        pass
+
+    def end_game(self, button):
+        x, y = self.myForm.get_x_y()
+        for y_pos in range(y):
+            for x_pos in range(x):
+                self.myForm.mines[y_pos][x_pos].setText(str(self.field_values[y_pos][x_pos]))
+                self.myForm.disableButton(x_pos, y_pos)
+        button.setStyleSheet("""
+        QPushButton { background-color: red }
+        """)
+        self.myForm.showRestart()
+
+    def rightclick_button(self, button, x, y):
         current_text = button.text()
         next_text = self.cycle_text(current_text)
         button.setText(next_text)
