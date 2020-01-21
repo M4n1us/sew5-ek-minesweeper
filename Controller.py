@@ -17,6 +17,7 @@ class Controller(QMainWindow):
         self.myForm.pushButton.clicked.connect(self.start_game)
         self.myForm.b1.clicked.connect(self.restart_game)
         self.field_values = []
+        self.covered_tiles = []
         self.mine_char = "X"
 
     def start_game(self):
@@ -167,7 +168,7 @@ class Controller(QMainWindow):
     def leftclick_button(self, button, x, y):
         if self.field_values[y][x] == self.mine_char:
             self.end_game(button)
-        elif self.field_values[y][x] == 0:
+        elif int(self.field_values[y][x]) == 0:
             self.flood_fill(x, y)
         else:
             self.myForm.disableButton(x, y)
@@ -175,14 +176,44 @@ class Controller(QMainWindow):
 
     def restart_game(self):
         self.field_values = []
+        self.covered_tiles = []
         self.myForm.teardown_game()
         self.myForm.showStart()
         self.myForm.pushButton.clicked.connect(self.start_game)
         self.myForm.d.close()
-        pass
 
-    def flood_fill(self, x, y):
-        pass
+    def flood_fill(self, x_start, y_start):
+        x_size, y_size = len(self.field_values[0]), len(self.field_values)
+        stack = {(x_start, y_start)}
+
+        crater = []
+
+        while stack:
+            point = stack.pop()
+            x, y = point
+            not_handled = point not in crater
+            not_covered = point not in self.covered_tiles
+            valid = self.element_has_no_mines(x, y)
+            if not_handled and not_covered and valid:
+
+                crater.append(point)
+                self.covered_tiles.append(point)
+                if x > 0 and self.element_has_no_mines(x - 1, y):
+                    stack.add((x - 1, y))
+                if x < (x_size - 1) and self.element_has_no_mines(x + 1, y):
+                    stack.add((x + 1, y))
+                if y > 0 and self.element_has_no_mines(x, y - 1):
+                    stack.add((x, y - 1))
+                if y < (y_size - 1) and self.element_has_no_mines(x, y + 1):
+                    stack.add((x, y + 1))
+
+        for x, y in crater:
+            self.myForm.disableButton(x, y)
+            self.myForm.mines[y][x].setText(str(self.field_values[y][x]))
+
+    def element_has_no_mines(self, x, y):
+        return int(self.field_values[y][x]) == 0 and self.neighboring(x, y)
+
 
     def end_game(self, button):
         x, y = self.myForm.get_x_y()
