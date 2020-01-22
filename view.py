@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file '.\ui\gui.ui'
-#
-# Created by: PyQt5 UI code generator 5.14.1
-#
-# WARNING! All changes made in this file will be lost!
-
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QDialog, QPushButton
 
@@ -20,7 +11,15 @@ stylesheet_disabled="""
         """
 
 class Ui_MainWindow(object):
+    """
+    UI Component based on PyQt5 for a minesweeper game, base elements are generated via QtDesigner
+    """
     def setupUi(self, MainWindow):
+        """
+        Sets up initial UI
+        :param MainWindow: Parent window
+        :return: none
+        """
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(622, 539)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -51,6 +50,10 @@ class Ui_MainWindow(object):
         self.d.setWindowModality(QtCore.Qt.ApplicationModal)
 
     def showStart(self):
+        """
+        Shows start UI to input game field data and launch the game
+        :return: none
+        """
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -84,41 +87,77 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Play"))
 
     def retranslateUi(self, MainWindow):
+        """
+        Translates UI Elements to system language
+        :param MainWindow: Parent window
+        :return: none
+        """
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Minesweeper"))
-        #self.mine.setText(_translate("MainWindow", "?"))
         self.label.setText(_translate("MainWindow", "Grid width:"))
         self.label_2.setText(_translate("MainWindow", "Grid height:"))
         self.pushButton.setText(_translate("MainWindow", "Play"))
 
     def showRestart(self):
+        """
+        Shows Restart Game UI
+        :return: None
+        """
         self.d.setWindowTitle("Restart?")
         self.d.exec_()
 
     def showWinRestart(self):
-        self.d.setWindowTitle("You Won!!!")
+        """
+        Shows Game Won UI
+        :return:
+        """
+        self.d.setWindowTitle("You Won")
         self.d.exec_()
 
     def get_x_y(self):
+        """
+        Gets x/y size from UI
+        :return: Tuple (x,y)
+        """
         return self.x_spin.value(), self.y_spin.value()
 
     def teardown_game(self):
+        """
+        Removes all game elements from the UI
+        :return:
+        """
         for i in reversed(range(self.buttons.count())):
             self.buttons.itemAt(i).widget().setParent(None)
         self.mines = []
 
     def teardown_menu(self):
+        """
+        Removes all Menui Elements from the UI
+        :return: none
+        """
         for i in reversed(range(self.horizontalLayout_3.count())):
             self.horizontalLayout_3.itemAt(i).widget().setParent(None)
         self.horizontalLayout_3.setParent(None)
 
     def disableButton(self, x, y):
+        """
+        Disables button to be non clickable and changes style to display button status
+        :param x: int for the x Pos
+        :param y: int for the y Pos
+        :return: none
+        """
         button = self.mines[y][x]
         button.setStyleSheet(stylesheet_disabled)
         button.leftclick_handler = None
         button.rightclick_handler = None
 
     def setupMines(self, x_count, y_count):
+        """
+        Generates playable mine fields in UI
+        :param x_count: mine columns to generate
+        :param y_count: mine rows to generate
+        :return: none
+        """
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
