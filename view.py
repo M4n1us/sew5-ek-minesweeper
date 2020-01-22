@@ -48,7 +48,6 @@ class Ui_MainWindow(object):
         self.d = QDialog()
         self.b1 = QPushButton("Restart", self.d)
         self.b1.move(50, 50)
-        self.d.setWindowTitle("Restart?")
         self.d.setWindowModality(QtCore.Qt.ApplicationModal)
 
     def showStart(self):
@@ -93,6 +92,11 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Play"))
 
     def showRestart(self):
+        self.d.setWindowTitle("Restart?")
+        self.d.exec_()
+
+    def showWinRestart(self):
+        self.d.setWindowTitle("You Won!!!")
         self.d.exec_()
 
     def get_x_y(self):
